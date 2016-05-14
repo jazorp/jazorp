@@ -1,6 +1,6 @@
-# gazorp
+# jazorp
 
-Gazorp is a java library that can be used to validate Java Objects.
+Jazorp is a java library that can be used to validate Java Objects.
 
 ###*Motivation*
 
