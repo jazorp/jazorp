@@ -1,5 +1,7 @@
 # jazorp
 
+[![Build Status](https://travis-ci.org/jazorp/jazorp.svg?branch=master)](https://travis-ci.org/jazorp/jazorp)
+
 Jazorp is a java library that can be used to validate Java Objects.
 
 ###*Motivation*
