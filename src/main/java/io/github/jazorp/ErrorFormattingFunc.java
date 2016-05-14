@@ -1,4 +1,4 @@
-package io.github.jarorp;
+package io.github.jazorp;
 
 @FunctionalInterface
 public interface ErrorFormattingFunc {

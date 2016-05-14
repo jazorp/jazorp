@@ -1,4 +1,4 @@
-package io.github.jarorp;
+package io.github.jazorp;
 
 import org.junit.Test;
 

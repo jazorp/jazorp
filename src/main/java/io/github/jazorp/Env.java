@@ -1,4 +1,4 @@
-package io.github.jarorp;
+package io.github.jazorp;
 
 import java.util.HashMap;
 import java.util.Map;

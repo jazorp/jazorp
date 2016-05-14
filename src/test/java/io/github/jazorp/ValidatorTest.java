@@ -1,4 +1,4 @@
-package io.github.jarorp;
+package io.github.jazorp;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.jarorp.Validators.*;
+import static io.github.jazorp.Validators.*;
 import static org.junit.Assert.*;
 
 public class ValidatorTest {
