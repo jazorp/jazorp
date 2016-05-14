@@ -1,7 +1,9 @@
 package io.github.jarorp;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,11 @@ import static org.junit.Assert.*;
 public class ValidatorTest {
 
     private Person person;
+
+    @Before
+    public void setup() {
+        ErrorFormatter.getInstance().reset();
+    }
 
     private static class Person {
 
@@ -236,10 +243,10 @@ public class ValidatorTest {
 
     @Test
     public void top_level_valid_should_proceed_to_nested() {
-        person = new Person("Morty", 16, "Foo", "123");
+        person = new Person("Morty", 10, "Foo", "123");
         NestedPersonValidator validator = new NestedPersonValidator();
         Result result = validator.validate(person);
-        assertEquals("TODO", result.getErrors().toString());
+        assertEquals("{address={zip=[zip must be exactly 5 characters long]}}", result.getErrors().toString());
     }
 
     @Test
@@ -247,17 +254,34 @@ public class ValidatorTest {
         Map<ErrorType, String> custom = new HashMap<>();
         custom.put(ErrorType.LENGTH, "The provided length (%2$s) for %s is not correct. It should be exactly %3$s characters long.");
         ErrorFormatter.getInstance().override(custom);
-        // TODO change 0 to valid
-        person = new Person("Morty", 0, "Foo", "123");
+        person = new Person("Morty", 10, "Foo", "123");
         NestedPersonValidator validator = new NestedPersonValidator();
         Result result = validator.validate(person);
-        assertEquals("{address={zip=[The provided length (123) for zip is not correct. It should be exactly 5 characters long.]}, age=[age must be positive]}",
+        assertEquals("{address={zip=[The provided length (123) for zip is not correct. It should be exactly 5 characters long.]}}",
                 result.getErrors().toString());
     }
 
+    private ErrorFormattingFunc fmtFunc = new ErrorFormattingFunc() {
+
+        @Override
+        public String format(ErrorType error, Env env, Object[] args) {
+            if (error == ErrorType.NOT_BLANK && env.get("locale").equals("el")) {
+                return String.format("Το %s δεν μπορεί να είναι κενό", args);
+            }
+            fail("Formatting attrs where not matched");
+            return null;
+        }
+    };
+
     @Test
     public void error_customization_using_env() {
-        fail("Not implemented yet!");
+        Env env = new Env.Builder().set("locale", "el").build();
+        ErrorFormatter.getInstance().override(fmtFunc);
+        person = new Person("", 10);
+        Validator<Person> validator = (p) -> Aggregation.of(notBlank("name", p.getName())).withEnv(env);
+        Result result = validator.validate(person);
+        // TODO ?
+        assertEquals("{name=[Το name δεν μπορεί να είναι κενό]}", result.getErrors().toString());
     }
 
 }

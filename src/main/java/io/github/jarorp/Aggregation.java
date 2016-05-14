@@ -8,8 +8,7 @@ public class Aggregation {
 	private Set<ValidationThunk> validations;
 	private Map<String, Aggregation> nested = new TreeMap<>();
 
-	// TODO
-	private Env env = new Env();
+	private Env env = Env.empty();
 
 	private Aggregation aggregate(ValidationThunk... thunks) {
         // TODO
@@ -41,6 +40,11 @@ public class Aggregation {
         for (int i=0; i<ts.size(); i++) {
             nested(field + "[" + i + "]", validator, ts.get(i));
         }
+        return this;
+    }
+
+    public Aggregation withEnv(Env env) {
+        this.env = env;
         return this;
     }
 

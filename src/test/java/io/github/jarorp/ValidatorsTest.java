@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ValidatorsTest {
 
-    private Env env = new Env();
+    private Env env = Env.empty();
 
     private String getEvalError(ValidationThunk vt) {
         return vt.validate(env).getError().getError();

@@ -27,7 +27,7 @@ public class Result {
 
     public Result put(String field, Result nested) {
         Map<String, Object> errors = nested.getErrors();
-        if (this.errors != null && !this.errors.isEmpty()) {
+        if (errors != null && !errors.isEmpty()) {
             this.errors.put(field, errors);
         }
         return this;

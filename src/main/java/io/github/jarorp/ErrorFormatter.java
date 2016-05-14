@@ -5,10 +5,20 @@ import java.util.Map;
 
 public class ErrorFormatter {
 
+    private static final Map<ErrorType, String> STOCK_ERROR_MESSAGES = new HashMap<>();
+
+    static {
+        STOCK_ERROR_MESSAGES.put(ErrorType.NOT_NULL, "%s cannot be null");
+        STOCK_ERROR_MESSAGES.put(ErrorType.NOT_BLANK, "%s cannot be blank");
+        STOCK_ERROR_MESSAGES.put(ErrorType.POSITIVE, "%s must be positive");
+        STOCK_ERROR_MESSAGES.put(ErrorType.MIN_LENGTH, "%s must have at least %3$s characters");
+        STOCK_ERROR_MESSAGES.put(ErrorType.LENGTH, "%s must be exactly %3$s characters long");
+    }
+
     private static ErrorFormatter instance;
 
     private ErrorFormatter() {
-        init();
+        reset();
     }
 
     public static ErrorFormatter getInstance() {
@@ -21,14 +31,9 @@ public class ErrorFormatter {
     private Map<ErrorType, String> errorMap = new HashMap<>();
     private ErrorFormattingFunc fmtFunc;
 
-    private void init() {
+    public void reset() {
+        errorMap = new HashMap<>(STOCK_ERROR_MESSAGES);
         fmtFunc = (error, env, args) -> String.format(errorMap.get(error), args);
-
-        errorMap.put(ErrorType.NOT_NULL, "%s cannot be null");
-        errorMap.put(ErrorType.NOT_BLANK, "%s cannot be blank");
-        errorMap.put(ErrorType.POSITIVE, "%s must be positive");
-        errorMap.put(ErrorType.MIN_LENGTH, "%s must have at least %3$s characters");
-        errorMap.put(ErrorType.LENGTH, "%s must be exactly %3$s characters long");
     }
 
     public void override(Map<ErrorType, String> customErrors) {
