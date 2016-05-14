@@ -1,6 +1,7 @@
 # jazorp
 
 [![Build Status](https://travis-ci.org/jazorp/jazorp.svg?branch=master)](https://travis-ci.org/jazorp/jazorp)
+[![Coverage Status](https://coveralls.io/repos/github/jazorp/jazorp/badge.svg?branch=master)](https://coveralls.io/github/jazorp/jazorp?branch=master)
 
 Jazorp is a java library that can be used to validate Java Objects.
 
