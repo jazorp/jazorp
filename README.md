@@ -7,26 +7,182 @@ Jazorp is a java library that can be used to validate Java Objects.
 
 ###*Motivation*
 
-TODO
+Jazorp was designed to provide a simple, yet effective, way of
+validating Java objects and provide structured error data that reflect the actual Object that is validated.
+
 
 ###*Features*
 
-TODO
+Despite the fact that a declarative approach looks much more attractive and cleaner in regards of data validation, Gazorp is imperative. This can be perceived as a rather ugly approach at a first glance but it has some very important advantages:
+
+- Object data to field name mapping can be arbitrarily changed without a hustle.
+- Domain Objects are not overblown with annotations, especially in cases when an Object can be validated differently depending on the context/action.
+- For the reason described above there is no need for reflection. There is only plain old data processing and recursion.
+- No reflection means that type erasure is irrelevant when it comes to validation of nested lists.
+- A series of complex validations can be performed on an object and they can all "live" in the same validation class. This can make the code easier to understand.
+- Jazorp's validation classes are context agnostic and for that reason they can be invoked at any point the user chooses.
+
+Extra features include:
+
+- [x] Blocking validators
+- [x] All validators are evaluated lazily
+- [x] Message customization for stock validators
+- [x] Extended customization for stock validators
+- [ ] Optional validators (TODO)
+- [ ] Validator composition (TODO)
+
+
+###*Built-in validators*
+
+Jazop comes with a set of built in validations which are the following:
+
+- [x] `notNull` - `Object`
+- [x] `notBlank` - `String`
+- [x] `minLength` - `String`
+- [x] `length` - `String`
+- [x] `positive` - `Number`
+- [ ] `email` - `String`
+- [ ] `inRange` - `Number, Number`
+- [ ] `memberOf` - `T, List<T>`
+
 
 ###*Example*
 
-TODO
+Consider the following domain object (getter and setters are omitted for brevity in all classes):
+
+```java
+class Person {
+
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+```
+
+You can create a validator for that class as follows:
+
+```java
+import static io.github.jazorp.Validators.*;
+
+class PersonValidator implements Validator<Person> {
+
+    @Override
+    public Aggregation collect(Person person) {
+        return aggregate(notBlank("name", person.getName()),
+                         positive("age", person.getAge()));
+    }
+}
+```
+
+Now you can validate Person objects:
+
+```java
+PersonValidator validator = new PersonValidator();
+Person person = new Person("Morty", 16);
+Result result = validator.validate(person);
+assertTrue(result.isValid());
+person = new Person("", 0);
+result = validator.validate(person);
+assertFalse(result.isValid());
+assertEquals("{age=[age must be positive], name=[name cannot be blank]}",
+        result.getErrors().toString());
+```
+
+Now consider a more complex example. There is an Address class:
+
+```java
+class Address {
+
+    private String street;
+    private String zip;
+
+    public Address(String street, String zip) {
+        this.street = street;
+        this.zip = zip;
+    }
+}
+```
+
+And the Person has an address:
+
+```java
+class Person {
+
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public Person(String name, int age, String address, String zip) {
+        this(name, age);
+        this.address = new Address(address, zip);
+    }
+}
+```
+
+An address validator can be formed as follows:
+
+```java
+import static io.github.jazorp.Validators.*;
+
+class AddressValidator implements Validator<Address> {
+
+    @Override
+    public Aggregation collect(Address address) {
+        return aggregate(notBlank("street", address.getStreet()),
+                         length("zip", address.getZip(), 5));
+    }
+}
+```
+
+We can create an extended version our existing validator:
+
+```java
+import static io.github.jazorp.Validators.*;
+
+class NestedPersonValidator implements Validator<Person> {
+
+    @Override
+    public Aggregation collect(Person person) {
+        return aggregate(notBlank("name", person.getName()),
+                         positive("age", person.getAge()))
+                .nested("address", addressValidator, person.getAddress());
+    }
+}
+```
+
+_Note:_ It is assumed that the `addressValidator` instance is passed to `NestedPersonValidator` using some form of
+dependency injection (either automatic or manual), or by plain old statically initialized classes.
+
+Validating the extended Person:
+
+```java
+NestedPersonValidator validator = new NestedPersonValidator();
+Person person = new Person("Morty", 0, "", "123456");
+Result result = validator.validate(person);
+assertFalse(result.isValid());
+assertEquals("{address={street=[street cannot be blank], zip=[zip must be exactly 5 characters long]}, age=[age must be positive]}",
+        result.getErrors().toString());
+```
+
+Notice the error nesting.
 
 
 ###*Download*
 
-TODO
+There are no releases at the moment so you have to build the library manually using the `jar` gradle task.
 
 
 ###*Documentation*
 
-TODO
-
+Until it is written check the [ValidatorTest.java](https://github.com/jazorp/jazorp/blob/master/src/test/java/io/github/jazorp/ValidatorTest.java)
 ###*Contributors*
 
 Your name here ;)
