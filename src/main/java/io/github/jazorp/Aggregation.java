@@ -8,8 +8,6 @@ public class Aggregation {
     private Set<ValidationThunk> validations;
     private Map<String, Aggregation> nested = new TreeMap<>();
 
-    private Env env = Env.empty();
-
     private Aggregation aggregate(ValidationThunk... thunks) {
         // TODO
         Set<ValidationThunk> hashSet = new HashSet<>(Arrays.asList(thunks));
@@ -43,20 +41,15 @@ public class Aggregation {
         return this;
     }
 
-    public Aggregation withEnv(Env env) {
-        this.env = env;
-        return this;
-    }
+    public Result validate(Env env) {
 
-    public Result validate() {
-
-        Result result = validateImpl(this);
+        Result result = validateImpl(this, env);
 
         if (!result.wasBlocked()) {
             for (Map.Entry<String, Aggregation> entry : nested.entrySet()) {
                 String key = entry.getKey();
                 Aggregation nestedAggr = entry.getValue();
-                Result validate = nestedAggr.validate();
+                Result validate = nestedAggr.validate(env);
                 if (!validate.isValid()) {
                     result.put(key, validate);
                 }
@@ -66,7 +59,7 @@ public class Aggregation {
         return result;
     }
 
-    private Result validateImpl(Aggregation aggregation) {
+    private Result validateImpl(Aggregation aggregation, Env env) {
 
         boolean proceed = true;
 

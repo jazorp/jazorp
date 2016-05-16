@@ -277,8 +277,8 @@ public class ValidatorTest {
         Env env = new Env.Builder().set("locale", "el").build();
         ErrorFormatter.getInstance().override(fmtFunc);
         person = new Person("", 10);
-        Validator<Person> validator = (p) -> Aggregation.of(notBlank("name", p.getName())).withEnv(env);
-        Result result = validator.validate(person);
+        Validator<Person> validator = (p) -> Aggregation.of(notBlank("name", p.getName()));
+        Result result = validator.validate(person, env);
         // TODO ?
         assertEquals("{name=[Το name δεν μπορεί να είναι κενό]}", result.getErrors().toString());
     }
