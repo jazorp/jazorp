@@ -24,12 +24,12 @@ Despite the fact that a declarative approach looks much more attractive and clea
 
 Extra features include:
 
-- [x] Blocking validators
-- [x] All validators are evaluated lazily
-- [x] Message customization for stock validators
-- [x] Extended customization for stock validators
-- [ ] Optional validators (TODO)
-- [ ] Validator composition (TODO)
+- Blocking validators
+- All validators are evaluated lazily
+- Message customization for stock validators
+- Extended customization for stock validators
+- Optional validators
+- Validator composition
 
 
 ###*Built-in validators*
