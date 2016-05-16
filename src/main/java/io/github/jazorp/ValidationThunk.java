@@ -2,8 +2,7 @@ package io.github.jazorp;
 
 public class ValidationThunk implements Comparable<ValidationThunk> {
 
-
-    private Thunk supplier;
+    private Thunk thunk;
 
     private int priority;
     public int getPriority() { return priority; }
@@ -11,31 +10,38 @@ public class ValidationThunk implements Comparable<ValidationThunk> {
     private boolean blocking;
     public boolean isBlocking() { return blocking; }
 
+    private boolean optional;
+
     @Override
     public int compareTo(ValidationThunk o) {
         return priority < o.priority ? -1 : 1;
     }
 
-    private ValidationThunk(Thunk supplier, int priority, boolean blocking) {
-        this.supplier = supplier;
+    private ValidationThunk(Thunk thunk, int priority, boolean blocking) {
+        this.thunk = thunk;
         this.priority = priority;
         this.blocking = blocking;
     }
 
-    public static ValidationThunk of(Thunk supplier) {
-        return new ValidationThunk(supplier, 100, false);
+    public static ValidationThunk of(Thunk thunk) {
+        return new ValidationThunk(thunk, 100, false);
     }
 
-    public static ValidationThunk blocking(Thunk supplier) {
-        return new ValidationThunk(supplier, 10, true);
+    public static ValidationThunk blocking(Thunk thunk) {
+        return new ValidationThunk(thunk, 10, true);
     }
 
     public ValidationThunk blocking() {
-        return ValidationThunk.blocking(supplier);
+        return ValidationThunk.blocking(thunk);
+    }
+
+    public ValidationThunk optional() {
+        optional = true;
+        return this;
     }
 
     public Validation validate(Env env) {
-        return supplier.eval(env);
+        return thunk.eval(env, optional);
     }
 
     @Override
@@ -47,11 +53,11 @@ public class ValidationThunk implements Comparable<ValidationThunk> {
 
         ValidationThunk that = (ValidationThunk) o;
 
-        return supplier.equals(that.supplier);
+        return thunk.equals(that.thunk);
     }
 
     @Override
     public int hashCode() {
-        return supplier.hashCode();
+        return thunk.hashCode();
     }
 }

@@ -3,9 +3,15 @@ package io.github.jazorp;
 public class Validators {
 
     private static ValidationThunk validateImpl(boolean isInvalid, ErrorType error, Object... args) {
-        return ValidationThunk.of(env -> isInvalid ? Invalid.of((String) args[0],
-                ErrorFormatter.getInstance().format(error, env, args)) :
-                Valid.valid());
+        return ValidationThunk.of((env, optional) -> {
+            if (optional && args[1] == null) {
+                return Valid.valid();
+            } else {
+                return isInvalid ? Invalid.of((String) args[0],
+                        ErrorFormatter.getInstance().format(error, env, args)) :
+                        Valid.valid();
+            }
+        });
     }
 
     // =====================

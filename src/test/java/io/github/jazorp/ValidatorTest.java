@@ -3,7 +3,6 @@ package io.github.jazorp;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -282,6 +281,15 @@ public class ValidatorTest {
         Result result = validator.validate(person);
         // TODO ?
         assertEquals("{name=[Το name δεν μπορεί να είναι κενό]}", result.getErrors().toString());
+    }
+
+    @Test
+    public void optional_test() {
+        Validator<Person> validator = (p) -> Aggregation.of(notBlank("name", p.getName()).optional(),
+                                                            positive("age", p.getAge()));
+        Person person = new Person(null, 0);
+        Result result = validator.validate(person);
+        assertEquals("{age=[age must be positive]}",  result.getErrors().toString());
     }
 
 }
