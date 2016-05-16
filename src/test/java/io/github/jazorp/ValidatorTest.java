@@ -292,4 +292,17 @@ public class ValidatorTest {
         assertEquals("{age=[age must be positive]}",  result.getErrors().toString());
     }
 
+    @Test
+    public void validator_composition() {
+        Validator<Person> nameValidator = (p) -> Aggregation.of(notBlank("name", p.getName()));
+        Validator<Person> ageValidator = (p) -> Aggregation.of(notNull("name", p.getName()), positive("age", p.getAge()));
+        Validator<Person> personValidator = nameValidator.compose(ageValidator);
+        Person person = new Person(null, 0);
+        Result result = personValidator.validate(person);
+        assertEquals("{age=[age must be positive], name=[name cannot be blank, name cannot be null]}",  result.getErrors().toString());
+    }
+
+    // TODO composition with nested
+
+    // TODO deeply nested
 }

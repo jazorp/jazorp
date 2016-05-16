@@ -17,4 +17,9 @@ public interface Validator<T> {
         return Aggregation.of(thunks);
     }
 
+    default Validator<T> compose(Validator<T> other) {
+        Validator<T> that = this;
+        return o -> that.collect(o).compose(other.collect(o));
+    }
+
 }

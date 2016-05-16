@@ -18,6 +18,11 @@ public class Aggregation {
     private Aggregation() {
     }
 
+    private Aggregation(Set<ValidationThunk> validations, Map<String, Aggregation> nested) {
+        this.validations = validations;
+        this.nested = nested;
+    }
+
     public static Aggregation of(ValidationThunk... thunks) {
         Aggregation agg = new Aggregation();
         agg.aggregate(thunks);
@@ -39,6 +44,14 @@ public class Aggregation {
             nested(field + "[" + i + "]", validator, ts.get(i));
         }
         return this;
+    }
+
+    public Aggregation compose(Aggregation other) {
+        Set<ValidationThunk> composedValidations = new HashSet<>(validations);
+        composedValidations.addAll(other.validations);
+        Map<String, Aggregation> composedNested = new HashMap<>(nested);
+        composedNested.putAll(other.nested);
+        return new Aggregation(composedValidations, composedNested);
     }
 
     public Result validate(Env env) {
@@ -86,4 +99,5 @@ public class Aggregation {
 
         return new Result(collect1, !proceed);
     }
+
 }
