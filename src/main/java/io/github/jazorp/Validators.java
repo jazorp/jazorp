@@ -1,5 +1,7 @@
 package io.github.jazorp;
 
+import java.util.regex.Pattern;
+
 public class Validators {
 
     private static ValidationThunk validateImpl(boolean isInvalid, ErrorType error, Object... args) {
@@ -33,6 +35,14 @@ public class Validators {
     public static ValidationThunk length(String field, String value, int length) {
         boolean isInvalid = value == null || value.length() != length;
         return validateImpl(isInvalid, ErrorType.LENGTH, field, value, length);
+    }
+
+    public static ValidationThunk email(String field, String value) {
+        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+        boolean isValid = Pattern.compile(regex)
+                .matcher(value)
+                .matches();
+        return validateImpl(!isValid, ErrorType.EMAIL, field, value);
     }
 }
 
