@@ -5,7 +5,6 @@ public class ValidationThunk implements Comparable<ValidationThunk> {
     private Thunk thunk;
 
     private int priority;
-    public int getPriority() { return priority; }
 
     private boolean blocking;
     public boolean isBlocking() { return blocking; }
@@ -44,20 +43,4 @@ public class ValidationThunk implements Comparable<ValidationThunk> {
         return thunk.eval(env, optional);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        ValidationThunk that = (ValidationThunk) o;
-
-        return thunk.equals(that.thunk);
-    }
-
-    @Override
-    public int hashCode() {
-        return thunk.hashCode();
-    }
 }
