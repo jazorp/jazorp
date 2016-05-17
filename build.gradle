@@ -13,8 +13,8 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
-
-version '0.1.0-SNAPSHOT'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 jacocoTestReport {
     reports {
@@ -32,4 +32,70 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+group = "io.github.jazorp"
+archivesBaseName = "jazorp"
+version = "0.1.0-SNAPSHOT"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Jazorp'
+                packaging 'jar'
+                description 'A Java library that can be used to validate Java Objects.'
+                url 'https://github.com/jazorp/jazorp'
+
+                scm {
+                    url 'https://github.com/jazorp/jazorp'
+                    connection 'scm:git:git://github.com/jazorp/jazorp.git'
+                    developerConnection 'scm:git:git://github.com/jazorp/jazorp.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'kongeor'
+                        name 'Kostas Georgiadis'
+                        email 'kongeor@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
