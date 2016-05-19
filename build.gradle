@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
     id "com.github.kt3k.coveralls" version "2.6.3"
+    id 'net.researchgate.release' version '2.3.5'
 }
 
 apply plugin: 'java'
@@ -102,3 +103,5 @@ uploadArchives {
         }
     }
 }
+
+afterReleaseBuild.dependsOn uploadArchives
