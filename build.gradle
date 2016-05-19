@@ -53,10 +53,6 @@ signing {
     sign configurations.archives
 }
 
-group = "io.github.jazorp"
-archivesBaseName = "jazorp"
-version = "0.1.0-SNAPSHOT"
-
 def ossrhUsername = hasProperty('ossrhUsername') ? ossrhUsername : ''
 def ossrhPassword = hasProperty('ossrhPassword') ? ossrhPassword : ''
 
@@ -105,7 +101,3 @@ uploadArchives {
 }
 
 afterReleaseBuild.dependsOn uploadArchives
-
-release {
-    versionPropertyFile = 'build.gradle'
-}
