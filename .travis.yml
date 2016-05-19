@@ -3,8 +3,9 @@ language: java
 jdk:
   - oraclejdk8
 
-script:
-  - ./gradlew check
+install: /bin/true
+
+script: ./gradlew check
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
