@@ -56,6 +56,9 @@ group = "io.github.jazorp"
 archivesBaseName = "jazorp"
 version = "0.1.0-SNAPSHOT"
 
+def ossrhUsername = hasProperty('ossrhUsername') ? ossrhUsername : ''
+def ossrhPassword = hasProperty('ossrhPassword') ? ossrhPassword : ''
+
 uploadArchives {
     repositories {
         mavenDeployer {
