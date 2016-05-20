@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/jazorp/jazorp.svg?branch=master)](https://travis-ci.org/jazorp/jazorp)
 [![Coverage Status](https://coveralls.io/repos/github/jazorp/jazorp/badge.svg?branch=master)](https://coveralls.io/github/jazorp/jazorp?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.jazorp/jazorp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.jazorp/jazorp)
+
 
 Jazorp is a java library that can be used to validate Java Objects.
 
@@ -13,7 +15,7 @@ validating Java objects and provide structured error data that reflect the actua
 
 ###*Features*
 
-Despite the fact that a declarative approach looks much more attractive and cleaner in regards of data validation, Gazorp is imperative. This can be perceived as a rather ugly approach at a first glance but it has some very important advantages:
+Despite the fact that a declarative approach looks much more attractive and cleaner in regards of data validation, Jazorp is imperative. This can be perceived as a rather ugly approach at a first glance but it has some very important advantages:
 
 - Object data to field name mapping can be arbitrarily changed without a hustle.
 - Domain Objects are not overblown with annotations, especially in cases when an Object can be validated differently depending on the context/action.
@@ -41,14 +43,16 @@ Jazop comes with a set of built in validations which are the following:
 - [x] `minLength` - `String`
 - [x] `length` - `String`
 - [x] `positive` - `Number`
-- [ ] `email` - `String`
-- [ ] `inRange` - `Number, Number`
-- [ ] `memberOf` - `T, List<T>`
+- [x] `email` - `String`
+- [ ] `min` - `Number`
+- [ ] `max` - `Number`
+- [ ] `memberOf` - `T, Iterable<T>`
+- [ ] `memberOf` - `T, T...`
 
 
 ###*Example*
 
-Consider the following domain object (getter and setters are omitted for brevity in all classes):
+Consider the following domain object (getters and setters are omitted for brevity in all classes):
 
 ```java
 class Person {
@@ -78,7 +82,7 @@ class PersonValidator implements Validator<Person> {
 }
 ```
 
-Now you can validate Person objects:
+Now you can validate `Person` objects:
 
 ```java
 PersonValidator validator = new PersonValidator();
@@ -92,7 +96,7 @@ assertEquals("{age=[age must be positive], name=[name cannot be blank]}",
         result.getErrors().toString());
 ```
 
-Now consider a more complex example. There is an Address class:
+Now consider a more complex example. There is an `Address` class:
 
 ```java
 class Address {
@@ -107,7 +111,7 @@ class Address {
 }
 ```
 
-And the Person has an address:
+And the `Person` has an `Address`:
 
 ```java
 class Person {
@@ -127,7 +131,7 @@ class Person {
 }
 ```
 
-An address validator can be formed as follows:
+An `Address` validator can be formed as follows:
 
 ```java
 import static io.github.jazorp.Validators.*;
@@ -161,7 +165,7 @@ class NestedPersonValidator implements Validator<Person> {
 _Note:_ It is assumed that the `addressValidator` instance is passed to `NestedPersonValidator` using some form of
 dependency injection (either automatic or manual), or by plain old statically initialized classes.
 
-Validating the extended Person:
+Validating the extended `Person`:
 
 ```java
 NestedPersonValidator validator = new NestedPersonValidator();
@@ -177,15 +181,18 @@ Notice the error nesting.
 
 ###*Download*
 
-There are no releases at the moment so you have to build the library manually using the `jar` gradle task.
+Download from [Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.jazorp/jazorp)
 
 
 ###*Documentation*
 
 Until it is written check the [ValidatorTest.java](https://github.com/jazorp/jazorp/blob/master/src/test/java/io/github/jazorp/ValidatorTest.java)
+
+
 ###*Contributors*
 
-Your name here ;)
+Andrew Iatropoulos
+
 
 ###*License*
 
