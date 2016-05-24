@@ -2,9 +2,7 @@ package io.github.jazorp;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ValidatorsTest {
 
@@ -40,7 +38,12 @@ public class ValidatorsTest {
     public void minLength() {
         String error = getEvalError(Validators.minLength("foo", "asd", 5));
         assertEquals("foo must have at least 5 characters", error);
+    }
 
+    @Test
+    public void length() {
+        String error = getEvalError(Validators.length("foo", "asd", 5));
+        assertEquals("foo must be exactly 5 characters long", error);
     }
 
     @Test

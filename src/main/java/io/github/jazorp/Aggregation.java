@@ -8,14 +8,8 @@ public class Aggregation {
     private Set<ValidationThunk> validations;
     private Map<String, Aggregation> nested = new TreeMap<>();
 
-    private Aggregation aggregate(ValidationThunk... thunks) {
-        // TODO
-        Set<ValidationThunk> hashSet = new HashSet<>(Arrays.asList(thunks));
-        validations = new TreeSet<>(hashSet);
-        return this;
-    }
-
-    private Aggregation() {
+    private Aggregation(Set<ValidationThunk> validations) {
+        this.validations = validations;
     }
 
     private Aggregation(Set<ValidationThunk> validations, Map<String, Aggregation> nested) {
@@ -24,9 +18,7 @@ public class Aggregation {
     }
 
     public static Aggregation of(ValidationThunk... thunks) {
-        Aggregation agg = new Aggregation();
-        agg.aggregate(thunks);
-        return agg;
+        return new Aggregation(new TreeSet<>(Arrays.asList(thunks)));
     }
 
     public Aggregation nested(String field, Aggregation aggregation) {
