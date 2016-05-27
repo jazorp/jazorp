@@ -49,6 +49,10 @@ public class Validators {
         return validateImpl(v -> v.length() >= min, ErrorType.MIN_LENGTH, field, value, min);
     }
 
+    public static ValidationThunk maxLength(String field, String value, Integer max) {
+        return validateImpl(v -> v.length()  <= max, ErrorType.MAX_LENGTH, field, value, max);
+    }
+
     public static ValidationThunk length(String field, String value, int length) {
         return validateImpl(v -> v.length() == length, ErrorType.LENGTH, field, value, length);
     }
