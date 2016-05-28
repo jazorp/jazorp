@@ -3,10 +3,7 @@ package io.github.jazorp;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.jazorp.Validators.*;
 import static org.junit.Assert.*;
@@ -105,8 +102,10 @@ public class ValidatorTest {
         person = new Person("", 0);
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{age=[age must be positive], name=[name cannot be blank]}",
-                result.getErrors().toString());
+        Map<String, Set<String>> errors = new HashMap<>();
+        errors.put("age", Collections.singleton("age must be positive"));
+        errors.put("name", Collections.singleton("name cannot be blank"));
+        assertEquals(errors, result.getErrors());
     }
 
     private static class MultiplePersonValidator implements Validator<Person> {
@@ -125,8 +124,10 @@ public class ValidatorTest {
         person = new Person(null, 0);
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{age=[age must be positive], name=[name cannot be blank, name cannot be null]}",
-                result.getErrors().toString());
+        Map<String, Set<String>> errors = new HashMap<>();
+        errors.put("age", Collections.singleton("age must be positive"));
+        errors.put("name", new HashSet<>(Arrays.asList("name cannot be blank", "name cannot be null")));
+        assertEquals(errors, result.getErrors());
     }
 
     private static class BlockingPersonValidator implements Validator<Person> {
@@ -144,8 +145,8 @@ public class ValidatorTest {
         person = new Person("", 0);
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{name=[name cannot be blank]}",
-                result.getErrors().toString());
+        assertEquals(Collections.singletonMap("name",
+                Collections.singleton("name cannot be blank")), result.getErrors());
     }
 
     private static class UnorderedBlockingPersonValidator implements Validator<Person> {
@@ -163,8 +164,8 @@ public class ValidatorTest {
         person = new Person("", 0);
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{name=[name cannot be blank]}",
-                result.getErrors().toString());
+        assertEquals(Collections.singletonMap("name",
+                Collections.singleton("name cannot be blank")), result.getErrors());
     }
 
     private static class AddressValidator implements Validator<Address> {
@@ -203,8 +204,13 @@ public class ValidatorTest {
         person = new Person("Morty", 0, "", "123456");
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{address={street=[street cannot be blank], zip=[zip must be exactly 5 characters long]}, age=[age must be positive]}",
-                result.getErrors().toString());
+        Map<String, Object> errors = new HashMap<>();
+        Map<String, Object> nested = new HashMap<>();
+        nested.put("street", Collections.singleton("street cannot be blank"));
+        nested.put("zip", Collections.singleton("zip must be exactly 5 characters long"));
+        errors.put("address", nested);
+        errors.put("age", Collections.singleton("age must be positive"));
+        assertEquals(errors, result.getErrors());
     }
 
     private static class PetValidator implements Validator<Pet> {
@@ -233,19 +239,22 @@ public class ValidatorTest {
         person = new Person("Morty", 0, Arrays.asList(new Pet("Snuffles"), new Pet(""), new Pet("Gazorpazorpfield")));
         Result result = validator.validate(person);
         assertFalse(result.isValid());
-        assertEquals("{age=[age must be positive], pet[1]={name=[name cannot be blank]}}",
-                result.getErrors().toString());
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("age", Collections.singleton("age must be positive"));
+        Map<String, Set<String>> nested = new HashMap<>();
+        nested.put("name", Collections.singleton("name cannot be blank"));
+        errors.put("pet[1]", nested);
+        assertEquals(errors, result.getErrors());
     }
-
-    // TODO validator composition
-//    private static Validator<Person> fooBarBaz = (Person person1) -> Aggregation.of(notNull("name", person1.getName()));
 
     @Test
     public void top_level_valid_should_proceed_to_nested() {
         person = new Person("Morty", 10, "Foo", "123");
         NestedPersonValidator validator = new NestedPersonValidator();
         Result result = validator.validate(person);
-        assertEquals("{address={zip=[zip must be exactly 5 characters long]}}", result.getErrors().toString());
+        Map<String, Object> errors = Collections.singletonMap("address",
+                Collections.singletonMap("zip", Collections.singleton("zip must be exactly 5 characters long")));
+        assertEquals(errors, result.getErrors());
     }
 
     @Test
@@ -256,8 +265,10 @@ public class ValidatorTest {
         person = new Person("Morty", 10, "Foo", "123");
         NestedPersonValidator validator = new NestedPersonValidator();
         Result result = validator.validate(person);
-        assertEquals("{address={zip=[The provided length (123) for zip is not correct. It should be exactly 5 characters long.]}}",
-                result.getErrors().toString());
+        Map<String, Object> errors = Collections.singletonMap("address",
+                Collections.singletonMap("zip", Collections.singleton(
+                        "The provided length (123) for zip is not correct. It should be exactly 5 characters long.")));
+        assertEquals(errors, result.getErrors());
     }
 
     private ErrorFormattingFunc fmtFunc = new ErrorFormattingFunc() {
@@ -279,8 +290,8 @@ public class ValidatorTest {
         person = new Person("", 10);
         Validator<Person> validator = (p) -> Aggregation.of(notBlank("name", p.getName()));
         Result result = validator.validate(person, env);
-        // TODO ?
-        assertEquals("{name=[Το name δεν μπορεί να είναι κενό]}", result.getErrors().toString());
+        assertEquals(Collections.singletonMap("name",
+                Collections.singleton("Το name δεν μπορεί να είναι κενό")), result.getErrors());
     }
 
     @Test
@@ -289,7 +300,8 @@ public class ValidatorTest {
                                                             positive("age", p.getAge()));
         Person person = new Person(null, 0);
         Result result = validator.validate(person);
-        assertEquals("{age=[age must be positive]}",  result.getErrors().toString());
+        assertEquals(Collections.singletonMap("age",
+                Collections.singleton("age must be positive")), result.getErrors());
     }
 
     @Test
@@ -299,10 +311,13 @@ public class ValidatorTest {
         Validator<Person> personValidator = nameValidator.compose(ageValidator);
         Person person = new Person(null, 0);
         Result result = personValidator.validate(person);
-        assertEquals("{age=[age must be positive], name=[name cannot be blank, name cannot be null]}",  result.getErrors().toString());
+        Map<String, Set<String>> errors = new HashMap<>();
+        errors.put("age", Collections.singleton("age must be positive"));
+        errors.put("name", new HashSet<>(Arrays.asList("name cannot be blank", "name cannot be null")));
+        assertEquals(errors, result.getErrors());
     }
 
+    //  TODO unique set
     // TODO composition with nested
-
     // TODO deeply nested
 }

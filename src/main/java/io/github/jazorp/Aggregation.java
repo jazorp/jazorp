@@ -87,7 +87,7 @@ public class Aggregation {
 
         Map<String, Object> collect1 = new TreeMap<>(collect.entrySet().stream().collect(
                 Collectors.toMap(Map.Entry::getKey, e -> e.getValue().stream().map(Validation::getError)
-                        .map(Error::getError).sorted().collect(Collectors.toList()))));
+                        .map(Error::getError).collect(Collectors.toSet()))));
 
         return new Result(collect1, !proceed);
     }
