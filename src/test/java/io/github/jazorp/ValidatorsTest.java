@@ -41,6 +41,12 @@ public class ValidatorsTest {
     }
 
     @Test
+    public void maxLength() {
+        String error = getEvalError(Validators.maxLength("foo", "asdfggh", 5));
+        assertEquals("foo must have at most 5 characters", error);
+    }
+
+    @Test
     public void length() {
         String error = getEvalError(Validators.length("foo", "asd", 5));
         assertEquals("foo must be exactly 5 characters long", error);

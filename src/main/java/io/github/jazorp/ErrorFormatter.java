@@ -12,6 +12,7 @@ public class ErrorFormatter {
         STOCK_ERROR_MESSAGES.put(ErrorType.NOT_BLANK, "%s cannot be blank");
         STOCK_ERROR_MESSAGES.put(ErrorType.POSITIVE, "%s must be positive");
         STOCK_ERROR_MESSAGES.put(ErrorType.MIN_LENGTH, "%s must have at least %3$s characters");
+        STOCK_ERROR_MESSAGES.put(ErrorType.MAX_LENGTH, "%s must have at most %3$s characters");
         STOCK_ERROR_MESSAGES.put(ErrorType.LENGTH, "%s must be exactly %3$s characters long");
         STOCK_ERROR_MESSAGES.put(ErrorType.EMAIL, "%s is not a valid e-mail address");
     }
