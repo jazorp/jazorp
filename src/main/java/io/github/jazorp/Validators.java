@@ -63,5 +63,21 @@ public class Validators {
     public static ValidationThunk email(String field, String value) {
         return validateImpl(v -> EMAIL_PATTERN.matcher(value).matches(), ErrorType.EMAIL, field, value);
     }
+
+    public static ValidationThunk lt(String field, Number value, Number max) {
+        return validateImpl(v -> v.doubleValue() < max.doubleValue(), ErrorType.LT, field, value, max);
+    }
+
+    public static ValidationThunk lte(String field, Number value, Number max) {
+        return validateImpl(v -> v.doubleValue() <= max.doubleValue(), ErrorType.LTE, field, value, max);
+    }
+
+    public static ValidationThunk gt(String field, Number value, Number min) {
+        return validateImpl(v -> v.doubleValue() > min.doubleValue(), ErrorType.GT, field, value, min);
+    }
+
+    public static ValidationThunk gte(String field, Number value, Number min) {
+        return validateImpl(v -> v.doubleValue() >= min.doubleValue(), ErrorType.GTE, field, value, min);
+    }
 }
 

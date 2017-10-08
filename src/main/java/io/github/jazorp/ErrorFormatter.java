@@ -15,6 +15,10 @@ public class ErrorFormatter {
         STOCK_ERROR_MESSAGES.put(ErrorType.MAX_LENGTH, "%s must have at most %3$s characters");
         STOCK_ERROR_MESSAGES.put(ErrorType.LENGTH, "%s must be exactly %3$s characters long");
         STOCK_ERROR_MESSAGES.put(ErrorType.EMAIL, "%s is not a valid e-mail address");
+        STOCK_ERROR_MESSAGES.put(ErrorType.LT, "%s must be less than %3$s");
+        STOCK_ERROR_MESSAGES.put(ErrorType.LTE, "%s must be less or equals than %3$s");
+        STOCK_ERROR_MESSAGES.put(ErrorType.GT, "%s must be grater than %3$s");
+        STOCK_ERROR_MESSAGES.put(ErrorType.GTE, "%s must be grater or equals than %3$s");
     }
 
     private static ErrorFormatter instance;
