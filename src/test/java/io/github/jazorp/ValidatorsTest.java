@@ -70,7 +70,7 @@ public class ValidatorsTest {
     // see @io.github.jazorp.NumberTest for detailed combination tests.
     @Test
     public void equal() {
-        String error = getEvalError(Validators.less("foo", 8, 5));
+        String error = getEvalError(Validators.equal("foo", 8, 5));
         assertEquals("foo must be equal to 5", error);
     }
 
