@@ -13,7 +13,7 @@ repositories {
 dependencies {
     compile 'com.sparkjava:spark-core:2.5'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'org.slf4j:slf4j-simple:1.7.13'
     compile 'io.github.jazorp:jazorp:0.1.0'
 
     testCompile 'junit:junit:4.12'
