@@ -1,6 +1,5 @@
 package io.github.jazorp;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
