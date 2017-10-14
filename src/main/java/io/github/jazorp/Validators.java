@@ -22,7 +22,7 @@ public class Validators {
                 if (value == null || !assertFunc.test(value)) {
                     return Invalid.of(field,
                             ErrorFormatter.getInstance().format(error, env,
-                                    concat(new Object[] { field, value }, args)));
+                                    concat(new Object[]{field, value}, args)));
                 } else {
                     return Valid.valid();
                 }
@@ -50,7 +50,7 @@ public class Validators {
     }
 
     public static ValidationThunk maxLength(String field, String value, Integer max) {
-        return validateImpl(v -> v.length()  <= max, ErrorType.MAX_LENGTH, field, value, max);
+        return validateImpl(v -> v.length() <= max, ErrorType.MAX_LENGTH, field, value, max);
     }
 
     public static ValidationThunk length(String field, String value, int length) {
@@ -63,5 +63,72 @@ public class Validators {
     public static ValidationThunk email(String field, String value) {
         return validateImpl(v -> EMAIL_PATTERN.matcher(value).matches(), ErrorType.EMAIL, field, value);
     }
+
+    /**
+     * see https://en.wikipedia.org/wiki/Machine_epsilon#Values_for_standard_hardware_floating_point_arithmetics
+     */
+    public static double EPSILON = 5.96e-08;
+
+    public static ValidationThunk equal(String field, Number value, Number ref) {
+        return equal(field, value, ref, EPSILON);
+    }
+
+    public static ValidationThunk equal(String field, Number value, Number ref, double epsilon) {
+        return validateImpl(doubleEquals(ref.doubleValue(), epsilon), ErrorType.EQUAL, field, value, ref);
+    }
+
+    public static ValidationThunk less(String field, Number value, Number max) {
+        return less(field, value, max, EPSILON);
+    }
+
+    public static ValidationThunk less(String field, Number value, Number max, double epsilon) {
+        return validateImpl(doubleEquals(max.doubleValue(), epsilon).negate().
+                        and(doubleLessThan(max.doubleValue(), epsilon)),
+                ErrorType.LESS, field, value, max);
+    }
+
+    public static ValidationThunk lessEqual(String field, Number value, Number max) {
+        return lessEqual(field, value, max, EPSILON);
+    }
+
+    public static ValidationThunk lessEqual(String field, Number value, Number max, double epsilon) {
+        return validateImpl(doubleEquals(max.doubleValue(), epsilon).
+                        or(doubleLessThan(max.doubleValue(), epsilon)),
+                ErrorType.LESS_EQUAL, field, value, max);
+    }
+
+    public static ValidationThunk greater(String field, Number value, Number min) {
+        return greater(field, value, min, EPSILON);
+    }
+
+    public static ValidationThunk greater(String field, Number value, Number min, double epsilon) {
+        return validateImpl(doubleEquals(min.doubleValue(), epsilon).negate().
+                        and(doubleGreaterThan(min.doubleValue(), epsilon)),
+                ErrorType.GREATER, field, value, min);
+    }
+
+    public static ValidationThunk greaterEqual(String field, Number value, Number min) {
+        return greaterEqual(field, value, min, EPSILON);
+    }
+
+    public static ValidationThunk greaterEqual(String field, Number value, Number min, double epsilon) {
+        return validateImpl(doubleEquals(min.doubleValue(), epsilon).
+                        or(doubleGreaterThan(min.doubleValue(), epsilon))
+                , ErrorType.GREATER_EQUAL, field, value, min);
+    }
+
+
+    private static Predicate<Number> doubleEquals(double b, double epsilon) {
+        return v -> v.doubleValue() == b || Math.abs(v.doubleValue() - b) < epsilon;
+    }
+
+    private static Predicate<Number> doubleLessThan(double b, double epsilon) {
+        return v -> v.doubleValue() - b < epsilon;
+    }
+
+    private static Predicate<Number> doubleGreaterThan(double b, double epsilon) {
+        return v -> v.doubleValue() - b > epsilon;
+    }
+
 }
 
