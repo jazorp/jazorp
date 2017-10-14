@@ -1,9 +1,9 @@
 package io.github.jazorp;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -37,15 +37,17 @@ public class Validators {
     // =====================
     // Validators
 
-	public static ValidationThunk memberOf(String field, final Object value, Iterable<Object> values) {
-		Collection<Object> collection = null;
-		if (values instanceof Collection) {
-			collection = (Collection<Object>) values;
-		} else {
-			collection = new ArrayList<>();
-			values.forEach(collection::add);
-		}
-		return memberOf(field, value, collection);
+	public static ValidationThunk memberOf(String field, final Object value, final Iterable<Object> values) {
+		return validateImpl((Object v) -> {
+			Iterator<Object> iterator = values.iterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (value.equals(object)) {
+					return true;
+				}
+			}
+			return false;
+		}, ErrorType.MEMBER_OF, field, value, values);
 	}
 
 	public static ValidationThunk memberOf(String field, final Object value, Object... values) {
