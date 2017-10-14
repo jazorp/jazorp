@@ -15,6 +15,7 @@ public class ErrorFormatter {
         STOCK_ERROR_MESSAGES.put(ErrorType.MAX_LENGTH, "%s must have at most %3$s characters");
         STOCK_ERROR_MESSAGES.put(ErrorType.LENGTH, "%s must be exactly %3$s characters long");
         STOCK_ERROR_MESSAGES.put(ErrorType.EMAIL, "%s is not a valid e-mail address");
+        STOCK_ERROR_MESSAGES.put(ErrorType.MEMBER_OF, "%s is not a member of %3$s");
     }
 
     private static ErrorFormatter instance;
