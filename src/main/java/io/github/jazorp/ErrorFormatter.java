@@ -20,6 +20,7 @@ public class ErrorFormatter {
         STOCK_ERROR_MESSAGES.put(ErrorType.LESS_EQUAL, "%s must be less or equal to %3$s");
         STOCK_ERROR_MESSAGES.put(ErrorType.GREATER, "%s must be grater than %3$s");
         STOCK_ERROR_MESSAGES.put(ErrorType.GREATER_EQUAL, "%s must be grater or equal to %3$s");
+        STOCK_ERROR_MESSAGES.put(ErrorType.MEMBER_OF, "%s is not a member of %3$s");
     }
 
     private static ErrorFormatter instance;
