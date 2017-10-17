@@ -1,10 +1,10 @@
+import static io.github.jazorp.Validators.notNull;
+import static spark.Spark.post;
+
 import com.google.gson.Gson;
+
 import io.github.jazorp.Aggregation;
 import io.github.jazorp.Validator;
-
-import static io.github.jazorp.Validators.notNull;
-import static spark.Spark.halt;
-import static spark.Spark.post;
 
 public class Main {
 
