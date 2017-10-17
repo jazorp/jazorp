@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 public class ValidatorsTest {
 
     private Env env = Env.empty();
@@ -15,6 +17,20 @@ public class ValidatorsTest {
     private boolean isValid(ValidationThunk vt) {
         return vt.validate(env).isValid();
     }
+
+    @Test
+	public void memberOf_iterable() {
+		String error = getEvalError(Validators.memberOf("foo", "1", Arrays.asList("a", "b", "c")));
+		assertEquals("foo is not a member of [a, b, c]", error);
+		assertTrue(isValid(Validators.memberOf("foo", "1", Arrays.asList("1", "b", "c"))));
+	}
+
+	@Test
+	public void memberOf_varArgs() {
+		String error = getEvalError(Validators.memberOf("foo", "1", "a", "b", "c"));
+		assertEquals("foo is not a member of [a, b, c]", error);
+		assertTrue(isValid(Validators.memberOf("foo", "1", "1", "a", "b")));
+	}
 
     @Test
     public void notNull() {
